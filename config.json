@@ -1,0 +1,77 @@
+{
+    "hotels": [
+        {
+            "company_id": "lanis-suites-de-luxe",
+            "name": "Lani Suites",
+            "payload": {
+                "channelData": {
+                    "clientActivityId": "1743621186456.3476015860815116.2"
+                },
+                "event": null,
+                "from": {
+                    "id": "lanis-suites-de-luxe",
+                    "language": "en-us",
+                    "name": "Visitante"
+                },
+                "locale": "en-us",
+                "text": "",
+                "textFormat": "plain",
+                "timestamp": "2025-04-02T19:16:40.647Z",
+                "type": "message"
+            }
+        },
+        {
+            "name": "Apartahotel Jardines de Sabatini",
+            "company_id": "apartahotel-jardines-de-sabatini",
+            "payload": {
+                "event": null,
+                "type": "message",
+                "text": "",
+                "from": {
+                    "id": "apartahotel-jardines-de-sabatini",
+                    "name": "Visitante",
+                    "language": "en-us"
+                },
+                "locale": "en-us",
+                "textFormat": "plain",
+                "timestamp": "2025-04-02T19:29:55.646Z",
+                "channelData": {
+                    "clientActivityId": "1743621258740.49060530311373696.4"
+                }
+            }
+        },
+        {
+            "name": "Hard Rock Hotel",
+            "company_id": "hard-rock-cafe-new-york",
+            "payload": {
+                "event": null,
+                "type": "message",
+                "text": "",
+                "from": {
+                    "id": "hard-rock-cafe-new-york",
+                    "name": "Visitante",
+                    "language": "en-us"
+                },
+                "locale": "en-us",
+                "textFormat": "plain",
+                "timestamp": "2025-04-02T19:32:05.759Z",
+                "channelData": {
+                    "clientActivityId": "1743621374586.6982734224460425.0"
+                },
+                "entities": [
+                    {
+                        "type": "ClientCapabilities",
+                        "requiresBotState": true,
+                        "supportsTts": true,
+                        "supportsListening": true
+                    }
+                ]
+            }
+        }
+    ],
+    "questions": [
+        "Les serviettes de piscine sont-elles fournies ?",
+        "Quels soins de spa proposez-vous, s'il vous pla\u00eet ?",
+        "Je souhaite faire une r\u00e9servation"
+    ]
+}

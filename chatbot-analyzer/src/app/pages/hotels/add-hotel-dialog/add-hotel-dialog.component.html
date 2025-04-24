@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Add New Hotel</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="hotelForm" class="hotel-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Hotel Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter hotel name">
+      <mat-error *ngIf="hotelForm.get('name')?.hasError('required')">
+        Hotel name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Company ID</mat-label>
+      <input matInput formControlName="company_id" placeholder="Enter company ID">
+      <mat-error *ngIf="hotelForm.get('company_id')?.hasError('required')">
+        Company ID is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Payload</mat-label>
+      <textarea matInput formControlName="payload" placeholder="Enter payload JSON" rows="4"></textarea>
+      <mat-error *ngIf="hotelForm.get('payload')?.hasError('required')">
+        Payload is required
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!hotelForm.valid">
+    Add Hotel
+  </button>
+</mat-dialog-actions> 

@@ -1,0 +1,73 @@
+<div class="hotels-container">
+  <div class="header">
+    <h1>Hotels Management</h1>
+    <button mat-raised-button color="primary" (click)="openAddHotelDialog()">
+      <mat-icon>add</mat-icon>
+      Add New Hotel
+    </button>
+  </div>
+
+  <!-- Hotels list -->
+  <mat-card class="hotels-list">
+    <mat-card-header>
+      <mat-card-title>Hotels List</mat-card-title>
+      <mat-card-subtitle>Manage your hotel configurations</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-accordion multi>
+        <mat-expansion-panel *ngFor="let hotel of hotels">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon class="hotel-icon">hotel</mat-icon>
+              {{ hotel.name }}
+            </mat-panel-title>
+            <mat-panel-description>
+              Company ID: {{ hotel.company_id }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="hotel-details">
+            <div class="hotel-info">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Hotel Name</mat-label>
+                <input matInput [(ngModel)]="hotel.name" [disabled]="!isEditing(hotel)">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Company ID</mat-label>
+                <input matInput [(ngModel)]="hotel.company_id" [disabled]="!isEditing(hotel)">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Payload</mat-label>
+                <textarea matInput [(ngModel)]="hotel.payload" [disabled]="!isEditing(hotel)" rows="4"></textarea>
+              </mat-form-field>
+            </div>
+
+            <div class="actions">
+              <button mat-stroked-button color="primary" (click)="toggleEdit(hotel)">
+                <mat-icon>{{ isEditing(hotel) ? 'save' : 'edit' }}</mat-icon>
+                {{ isEditing(hotel) ? 'Save' : 'Edit' }}
+              </button>
+              <button mat-stroked-button color="warn" (click)="deleteHotel(hotel.name)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <div class="empty-state" *ngIf="hotels.length === 0">
+        <mat-icon class="empty-icon">hotel</mat-icon>
+        <h3>No Hotels Found</h3>
+        <p>Start by adding your first hotel configuration</p>
+        <button mat-raised-button color="primary" (click)="openAddHotelDialog()">
+          <mat-icon>add</mat-icon>
+          Add Hotel
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

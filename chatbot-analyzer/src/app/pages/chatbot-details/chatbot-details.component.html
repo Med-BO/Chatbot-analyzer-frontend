@@ -1,0 +1,104 @@
+<div class="chatbot-details-container">
+  <div class="header">
+    <h1>Chatbot Analysis</h1>
+    <p class="subtitle">Select questions and hotels to analyze</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="loading-text">Running analysis...</p>
+  </div>
+
+  <div class="selection-container" *ngIf="!loading">
+    <div class="row">
+      <!-- Questions Section -->
+      <div class="col-md-6">
+        <div class="card selection-card">
+          <div class="card-header">
+            <h2>Questions</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-check" *ngFor="let question of questions">
+              <input class="form-check-input" type="checkbox" 
+                     [id]="'question-' + question.text"
+                     [(ngModel)]="question.selected">
+              <label class="form-check-label" [for]="'question-' + question.text">
+                {{ question.text }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hotels Section -->
+      <div class="col-md-6">
+        <div class="card selection-card">
+          <div class="card-header">
+            <h2>Hotels</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-check" *ngFor="let hotel of hotels">
+              <input class="form-check-input" type="checkbox"
+                     [id]="'hotel-' + hotel.name"
+                     [(ngModel)]="hotel.selected">
+              <label class="form-check-label" [for]="'hotel-' + hotel.name">
+                {{ hotel.name }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Run Analysis Button -->
+    <div class="text-center mt-4">
+      <button class="btn btn-primary btn-lg" 
+              (click)="runAnalysis()"
+              [disabled]="loading">
+        Run Analysis
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div class="results-container" *ngIf="analysisResults">
+    <div class="card">
+      <div class="card-header">
+        <h2>Analysis Results</h2>
+        <small class="text-muted">Timestamp: {{ analysisResults.timestamp }}</small>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Hotel</th>
+                <th>Question</th>
+                <th>Response</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let result of analysisResults.results">
+                <td>{{ result.hotel }}</td>
+                <td>{{ result.question }}</td>
+                <td>{{ result.response }}</td>
+                <td [ngClass]="getStatusClass(result.status)">
+                  {{ result.status }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div class="chatbot-selector-container">
+  <h1 class="title">Select a Chatbot to Test</h1>
+  
+  <div class="chatbot-grid">
+    <div *ngFor="let chatbot of chatbots" 
+         class="chatbot-card"
+         (click)="selectChatbot(chatbot.id)">
+      <div class="logo-container">
+        <img [src]="chatbot.logo" [alt]="chatbot.name + ' logo'" class="chatbot-logo">
+      </div>
+      <div class="chatbot-info">
+        <h2 class="chatbot-name">{{ chatbot.name }}</h2>
+        <p class="chatbot-description">{{ chatbot.description }}</p>
+      </div>
+      <div class="select-indicator">
+        <span class="select-text">Select</span>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+  </div>
+</div>
