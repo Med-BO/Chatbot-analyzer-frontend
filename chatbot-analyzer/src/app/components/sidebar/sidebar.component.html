@@ -1,0 +1,21 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+    <div class="sidebar-header">
+      <h1>Chatbot Analyzer</h1>
+    </div>
+
+    <mat-nav-list>
+      <a mat-list-item 
+         *ngFor="let item of navItems" 
+         [routerLink]="item.route"
+         [class.active]="isActive(item.route)">
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        <span matListItemTitle>{{ item.title }}</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container> 

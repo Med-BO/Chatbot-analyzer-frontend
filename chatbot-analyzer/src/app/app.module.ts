@@ -11,6 +11,10 @@ import { QuestionsComponent } from './pages/questions/questions.component';
 import { ApiService } from './services/api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { AddHotelDialogComponent } from './pages/hotels/add-hotel-dialog/add-hotel-dialog.component';
+import { AddQuestionDialogComponent } from './pages/questions/add-question-dialog/add-question-dialog.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 // Angular Material Imports
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -47,9 +51,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
-import { HttpClientModule } from '@angular/common/http';
-import { AddHotelDialogComponent } from './pages/hotels/add-hotel-dialog/add-hotel-dialog.component';
-import { AddQuestionDialogComponent } from './pages/questions/add-question-dialog/add-question-dialog.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { AddQuestionDialogComponent } from './pages/questions/add-question-dialo
     HotelsComponent,
     QuestionsComponent,
     AddHotelDialogComponent,
-    AddQuestionDialogComponent
+    AddQuestionDialogComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,

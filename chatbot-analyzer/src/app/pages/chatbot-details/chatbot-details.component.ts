@@ -36,9 +36,12 @@ export class ChatbotDetailsComponent implements OnInit {
   chatbotId: string = '';
   questions: Question[] = [];
   hotels: Hotel[] = [];
+  selectedQuestions: Question[] = [];
+  selectedHotels: Hotel[] = [];
   loading: boolean = false;
   analysisResults: AnalysisResponse | null = null;
   error: string | null = null;
+  displayedColumns: string[] = ['hotel', 'question', 'response', 'status'];
 
   constructor(
     private route: ActivatedRoute,
@@ -84,15 +87,7 @@ export class ChatbotDetailsComponent implements OnInit {
   }
 
   runAnalysis() {
-    const selectedQuestions = this.questions
-      .filter(q => q.selected)
-      .map(q => q.text);
-    
-    const selectedHotels = this.hotels
-      .filter(h => h.selected)
-      .map(h => h.name);
-
-    if (selectedQuestions.length === 0 || selectedHotels.length === 0) {
+    if (this.selectedQuestions.length === 0 || this.selectedHotels.length === 0) {
       this.error = 'Please select at least one question and one hotel';
       return;
     }
@@ -102,8 +97,8 @@ export class ChatbotDetailsComponent implements OnInit {
     this.analysisResults = null;
 
     this.http.post<AnalysisResponse>(`${environment.apiUrl}/ask`, {
-      questions: selectedQuestions,
-      hotels: selectedHotels
+      questions: this.selectedQuestions.map(q => q.text),
+      hotels: this.selectedHotels.map(h => h.name)
     }).subscribe({
       next: (response) => {
         this.analysisResults = response;
@@ -126,6 +121,19 @@ export class ChatbotDetailsComponent implements OnInit {
         return 'text-danger';
       case 'no_response':
         return 'text-warning';
+      default:
+        return '';
+    }
+  }
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'success':
+        return 'primary';
+      case 'error':
+        return 'warn';
+      case 'no_response':
+        return 'accent';
       default:
         return '';
     }

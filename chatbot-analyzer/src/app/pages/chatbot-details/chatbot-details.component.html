@@ -5,15 +5,18 @@
   </div>
 
   <!-- Error Message -->
-  <div *ngIf="error" class="alert alert-danger" role="alert">
-    {{ error }}
-  </div>
+  <mat-card *ngIf="error" class="error-card">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
   <!-- Loading Spinner -->
   <div *ngIf="loading" class="loading-container">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+    <mat-spinner diameter="50"></mat-spinner>
     <p class="loading-text">Running analysis...</p>
   </div>
 
@@ -21,48 +24,44 @@
     <div class="row">
       <!-- Questions Section -->
       <div class="col-md-6">
-        <div class="card selection-card">
-          <div class="card-header">
-            <h2>Questions</h2>
-          </div>
-          <div class="card-body">
-            <div class="form-check" *ngFor="let question of questions">
-              <input class="form-check-input" type="checkbox" 
-                     [id]="'question-' + question.text"
-                     [(ngModel)]="question.selected">
-              <label class="form-check-label" [for]="'question-' + question.text">
+        <mat-card class="selection-card">
+          <mat-card-header>
+            <mat-card-title>Questions</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-selection-list [(ngModel)]="selectedQuestions">
+              <mat-list-option *ngFor="let question of questions" [value]="question">
                 {{ question.text }}
-              </label>
-            </div>
-          </div>
-        </div>
+              </mat-list-option>
+            </mat-selection-list>
+          </mat-card-content>
+        </mat-card>
       </div>
 
       <!-- Hotels Section -->
       <div class="col-md-6">
-        <div class="card selection-card">
-          <div class="card-header">
-            <h2>Hotels</h2>
-          </div>
-          <div class="card-body">
-            <div class="form-check" *ngFor="let hotel of hotels">
-              <input class="form-check-input" type="checkbox"
-                     [id]="'hotel-' + hotel.name"
-                     [(ngModel)]="hotel.selected">
-              <label class="form-check-label" [for]="'hotel-' + hotel.name">
+        <mat-card class="selection-card">
+          <mat-card-header>
+            <mat-card-title>Hotels</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-selection-list [(ngModel)]="selectedHotels">
+              <mat-list-option *ngFor="let hotel of hotels" [value]="hotel">
                 {{ hotel.name }}
-              </label>
-            </div>
-          </div>
-        </div>
+              </mat-list-option>
+            </mat-selection-list>
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
 
     <!-- Run Analysis Button -->
     <div class="text-center mt-4">
-      <button class="btn btn-primary btn-lg" 
+      <button mat-raised-button 
+              color="primary"
               (click)="runAnalysis()"
               [disabled]="loading">
+        <mat-icon>play_arrow</mat-icon>
         Run Analysis
       </button>
     </div>
@@ -70,35 +69,45 @@
 
   <!-- Results Section -->
   <div class="results-container" *ngIf="analysisResults">
-    <div class="card">
-      <div class="card-header">
-        <h2>Analysis Results</h2>
-        <small class="text-muted">Timestamp: {{ analysisResults.timestamp }}</small>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Hotel</th>
-                <th>Question</th>
-                <th>Response</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let result of analysisResults.results">
-                <td>{{ result.hotel }}</td>
-                <td>{{ result.question }}</td>
-                <td>{{ result.response }}</td>
-                <td [ngClass]="getStatusClass(result.status)">
-                  {{ result.status }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Analysis Results</mat-card-title>
+        <mat-card-subtitle>Timestamp: {{ analysisResults.timestamp }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="analysisResults.results" class="results-table">
+          <!-- Hotel Column -->
+          <ng-container matColumnDef="hotel">
+            <th mat-header-cell *matHeaderCellDef>Hotel</th>
+            <td mat-cell *matCellDef="let result">{{ result.hotel }}</td>
+          </ng-container>
+
+          <!-- Question Column -->
+          <ng-container matColumnDef="question">
+            <th mat-header-cell *matHeaderCellDef>Question</th>
+            <td mat-cell *matCellDef="let result">{{ result.question }}</td>
+          </ng-container>
+
+          <!-- Response Column -->
+          <ng-container matColumnDef="response">
+            <th mat-header-cell *matHeaderCellDef>Response</th>
+            <td mat-cell *matCellDef="let result">{{ result.response }}</td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let result">
+              <mat-chip [color]="getStatusColor(result.status)" selected>
+                {{ result.status }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
