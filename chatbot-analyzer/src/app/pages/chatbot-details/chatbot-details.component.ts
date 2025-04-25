@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface Question {
   text: string;
@@ -45,7 +46,8 @@ export class ChatbotDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -137,5 +139,20 @@ export class ChatbotDetailsComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  copyResponse(response: string): void {
+    navigator.clipboard.writeText(response).then(() => {
+      this.snackBar.open('Response copied to clipboard', 'Close', {
+        duration: 2000,
+        panelClass: ['success-snackbar']
+      });
+    }).catch(err => {
+      this.snackBar.open('Failed to copy response', 'Close', {
+        duration: 2000,
+        panelClass: ['error-snackbar']
+      });
+      console.error('Failed to copy text: ', err);
+    });
   }
 }

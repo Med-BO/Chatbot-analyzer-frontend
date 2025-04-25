@@ -17,6 +17,7 @@ class ConfigManager:
 
     def _save_config(self):
         """Save configuration to file"""
+        print("### saving question")
         with open(self.config_path, 'w', encoding='utf-8') as f:
             json.dump(self.config, f, indent=4)
 

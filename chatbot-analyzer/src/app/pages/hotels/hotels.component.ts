@@ -26,7 +26,10 @@ export class HotelsComponent implements OnInit {
   loadHotels(): void {
     this.apiService.getAdminHotels().subscribe({
       next: (response) => {
-        this.hotels = response.hotels;
+        this.hotels = response.hotels.map(hotel => ({
+          ...hotel,
+          payload: typeof hotel.payload === 'string' ? hotel.payload : JSON.stringify(hotel.payload, null, 2)
+        }));
       },
       error: (error) => {
         this.showError('Failed to load hotels');
@@ -52,15 +55,26 @@ export class HotelsComponent implements OnInit {
       return;
     }
 
-    this.apiService.updateHotel(hotel.name, hotel).subscribe({
-      next: () => {
-        this.loadHotels();
-        this.showSuccess('Hotel updated successfully');
-      },
-      error: (error) => {
-        this.showError('Failed to update hotel');
-      }
-    });
+    // Ensure payload is a valid JSON string before sending
+    try {
+      const payloadObj = JSON.parse(hotel.payload);
+      const hotelToUpdate = {
+        ...hotel,
+        payload: payloadObj
+      };
+
+      this.apiService.updateHotel(hotel.name, hotelToUpdate).subscribe({
+        next: () => {
+          this.loadHotels();
+          this.showSuccess('Hotel updated successfully');
+        },
+        error: (error) => {
+          this.showError('Failed to update hotel');
+        }
+      });
+    } catch (e) {
+      this.showError('Invalid JSON payload');
+    }
   }
 
   deleteHotel(hotelName: string): void {
@@ -106,7 +120,13 @@ export class HotelsComponent implements OnInit {
       this.showError('Payload is required');
       return false;
     }
-    return true;
+    try {
+      JSON.parse(hotel.payload);
+      return true;
+    } catch (e) {
+      this.showError('Invalid JSON payload');
+      return false;
+    }
   }
 
   private showSuccess(message: string): void {
@@ -121,5 +141,26 @@ export class HotelsComponent implements OnInit {
       duration: 3000,
       panelClass: ['error-snackbar']
     });
+  }
+
+  formatJson(event: string, hotel: any): void {
+    try {
+      // Try to parse the JSON to validate it
+      const parsedJson = JSON.parse(event);
+      // If valid, format it nicely
+      hotel.payload = JSON.stringify(parsedJson, null, 2);
+    } catch (e) {
+      // If invalid JSON, keep the original text
+      // The error will be caught when saving
+    }
+  }
+
+  isValidJson(jsonString: string): boolean {
+    try {
+      JSON.parse(jsonString);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 } 

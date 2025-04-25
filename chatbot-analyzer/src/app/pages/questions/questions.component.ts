@@ -11,8 +11,8 @@ import { AddQuestionDialogComponent } from './add-question-dialog/add-question-d
 })
 export class QuestionsComponent implements OnInit {
   questions: string[] = [];
-  editingQuestions: Set<string> = new Set();
-  editedQuestion: string = '';
+  questionBeingEdited: string = ""
+  newQuestion: string = ""
 
   constructor(
     private apiService: ApiService,
@@ -35,35 +35,56 @@ export class QuestionsComponent implements OnInit {
     });
   }
 
-  isEditing(question: string): boolean {
-    return this.editingQuestions.has(question);
+  isEditing(questionToCheck: string): boolean {
+    return questionToCheck == this.questionBeingEdited
   }
 
   toggleEdit(question: string): void {
     if (this.isEditing(question)) {
-      this.updateQuestion(this.editedQuestion);
-      this.editingQuestions.delete(question);
+      this.updateQuestion(this.newQuestion)
     } else {
-      this.editedQuestion = question;
-      this.editingQuestions.add(question);
+      this.newQuestion = question
+      this.questionBeingEdited = question
     }
   }
 
-  updateQuestion(question: string): void {
-    // TODO: Implement API call to update question
-    this.snackBar.open('Question updated successfully', 'Close', {
-      duration: 3000,
-      panelClass: ['success-snackbar']
-    });
+  updateQuestion(newQuestion: string): void {
+    this.apiService.updateQuestion(this.questionBeingEdited, newQuestion)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Question updated successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+          this.questionBeingEdited = ""
+        },
+        error: (error) => {
+          this.snackBar.open('Failed to update question', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+          console.error('Error updating question:', error);
+        }
+      });
   }
 
   deleteQuestion(question: string): void {
-    // TODO: Implement API call to delete question
-    this.questions = this.questions.filter(q => q !== question);
-    this.snackBar.open('Question deleted successfully', 'Close', {
-      duration: 3000,
-      panelClass: ['success-snackbar']
-    });
+    this.apiService.deleteQuestion(
+      question
+    ).subscribe((data) => {
+      this.questions = this.questions.filter(q => q !== question);
+      this.snackBar.open('Question deleted successfully', 'Close', {
+        duration: 3000,
+        panelClass: ['success-snackbar']
+      });
+    }, (error) => {
+      console.log('Could not delete question ', error)
+      this.snackBar.open('Question cloud not be deleted', 'Close', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+    })
+    
   }
 
   openAddQuestionDialog(): void {
@@ -73,11 +94,16 @@ export class QuestionsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.questions.push(result);
-        this.snackBar.open('Question added successfully', 'Close', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
+        
+        this.apiService.addQuestion(
+          result
+        ).subscribe((data) => {
+          this.questions.push(result);
+          this.snackBar.open('Question added successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+        })
       }
     });
   }

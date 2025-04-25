@@ -45,11 +45,7 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
-        margin-bottom: 16px;
-
-        .full-width {
-          width: 100%;
-        }
+        padding: 16px;
       }
 
       .actions {
@@ -134,5 +130,17 @@
   .error-snackbar {
     background-color: #f44336;
     color: white;
+  }
+}
+
+.json-textarea {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre;
+  tab-size: 2;
+  
+  &:disabled {
+    background-color: rgba(0, 0, 0, 0.05);
   }
 } 

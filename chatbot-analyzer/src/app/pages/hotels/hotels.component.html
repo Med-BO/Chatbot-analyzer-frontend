@@ -41,7 +41,15 @@
 
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Payload</mat-label>
-                <textarea matInput [(ngModel)]="hotel.payload" [disabled]="!isEditing(hotel)" rows="4"></textarea>
+                <textarea matInput 
+                         [(ngModel)]="hotel.payload" 
+                         [disabled]="!isEditing(hotel)" 
+                         rows="8"
+                         class="json-textarea"
+                         (ngModelChange)="formatJson($event, hotel)"
+                         placeholder="Enter JSON payload"></textarea>
+                <mat-hint>Enter valid JSON payload</mat-hint>
+                <mat-error *ngIf="!isValidJson(hotel.payload)">Invalid JSON format</mat-error>
               </mat-form-field>
             </div>
 
