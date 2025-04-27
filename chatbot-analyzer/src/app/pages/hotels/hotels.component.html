@@ -7,8 +7,14 @@
     </button>
   </div>
 
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading hotels...</p>
+  </div>
+
   <!-- Hotels list -->
-  <mat-card class="hotels-list">
+  <mat-card class="hotels-list" *ngIf="!isLoading">
     <mat-card-header>
       <mat-card-title>Hotels List</mat-card-title>
       <mat-card-subtitle>Manage your hotel configurations</mat-card-subtitle>

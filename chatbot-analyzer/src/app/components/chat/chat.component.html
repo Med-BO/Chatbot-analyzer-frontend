@@ -1,0 +1,73 @@
+<div class="chat-container">
+  <!-- Hotel Selection Section -->
+  <div class="hotel-selection" *ngIf="!selectedHotel">
+    <mat-card class="selection-card">
+      <mat-card-header>
+        <mat-card-title>Select a Hotel</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="hotel-list">
+          <mat-card *ngFor="let hotel of hotels" class="hotel-card" (click)="selectHotel(hotel)">
+            <mat-card-content>
+              <div class="hotel-name">
+                <mat-icon>hotel</mat-icon>
+                <span>{{ hotel.name }}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Chat Section -->
+  <div class="chat-section" *ngIf="selectedHotel">
+    <mat-card class="chat-card">
+      <mat-card-header class="chat-header">
+        <mat-card-title>
+          <mat-icon>hotel</mat-icon>
+          {{ selectedHotel.name }}
+        </mat-card-title>
+        <button mat-raised-button color="primary" class="new-chat-btn" (click)="startNewChat()">
+          <mat-icon>refresh</mat-icon>
+          New Chat
+        </button>
+      </mat-card-header>
+
+      <mat-card-content class="messages-container">
+        <div class="message" *ngFor="let msg of messages" [ngClass]="{'user-message': msg.isUser, 'bot-message': !msg.isUser}">
+          <div class="message-content">
+            <mat-icon class="message-icon" *ngIf="msg.isUser">person</mat-icon>
+            <mat-icon class="message-icon" *ngIf="!msg.isUser">smart_toy</mat-icon>
+            <div class="message-text">{{ msg.text }}</div>
+          </div>
+        </div>
+        <div class="loading-indicator" *ngIf="isLoading">
+          <mat-spinner diameter="30"></mat-spinner>
+        </div>
+      </mat-card-content>
+
+      <mat-card-footer>
+        <form [formGroup]="chatForm" (ngSubmit)="sendMessage()" class="message-input">
+          <mat-form-field appearance="outline" class="message-field">
+            <mat-label>Type your message...</mat-label>
+            <input 
+              matInput 
+              formControlName="message" 
+              [disabled]="isLoading"
+            >
+            <button 
+              mat-icon-button 
+              matSuffix 
+              type="submit" 
+              [disabled]="!chatForm.valid || isLoading"
+              color="primary"
+            >
+              <mat-icon>send</mat-icon>
+            </button>
+          </mat-form-field>
+        </form>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+</div> 

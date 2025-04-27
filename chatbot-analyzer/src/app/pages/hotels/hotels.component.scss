@@ -1,5 +1,5 @@
 .hotels-container {
-  padding: 24px;
+  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
 
@@ -7,50 +7,72 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 
     h1 {
       margin: 0;
       color: #333;
-      font-size: 28px;
-      font-weight: 500;
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    mat-spinner {
+      margin-bottom: 16px;
+    }
+
+    p {
+      color: #666;
+      margin: 0;
+      font-size: 1.1em;
     }
   }
 
   .hotels-list {
+    margin-top: 20px;
+
     mat-card-header {
-      margin-bottom: 16px;
-    }
-
-    mat-card-title {
-      font-size: 20px;
-      font-weight: 500;
-    }
-
-    mat-card-subtitle {
-      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 20px;
     }
 
     .hotel-icon {
       margin-right: 8px;
-      color: #666;
+      color: #1976d2;
     }
 
     .hotel-details {
-      padding: 16px;
-      background-color: #fafafa;
-      border-radius: 4px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
 
       .hotel-info {
         display: flex;
         flex-direction: column;
         gap: 16px;
-        padding: 16px;
+
+        .full-width {
+          width: 100%;
+        }
+
+        .json-textarea {
+          font-family: monospace;
+          font-size: 0.9em;
+          line-height: 1.5;
+        }
       }
 
       .actions {
         display: flex;
-        gap: 8px;
+        gap: 12px;
         justify-content: flex-end;
       }
     }
@@ -61,7 +83,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 48px;
+    padding: 40px;
     text-align: center;
 
     .empty-icon {
@@ -73,14 +95,12 @@
     }
 
     h3 {
-      margin: 0 0 8px 0;
+      margin: 0 0 8px;
       color: #333;
-      font-size: 20px;
-      font-weight: 500;
     }
 
     p {
-      margin: 0 0 16px 0;
+      margin: 0 0 16px;
       color: #666;
     }
   }

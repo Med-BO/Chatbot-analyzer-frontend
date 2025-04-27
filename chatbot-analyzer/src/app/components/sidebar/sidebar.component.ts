@@ -16,7 +16,8 @@ export class SidebarComponent {
   navItems: NavItem[] = [
     { title: 'Chatbot Selector', icon: 'chat', route: '/chatbot-selector' },
     { title: 'Hotels', icon: 'hotel', route: '/hotels' },
-    { title: 'Questions', icon: 'question_answer', route: '/questions' }
+    { title: 'Questions', icon: 'question_answer', route: '/questions' },
+    { title: 'Live Chatbot', icon: 'chat', route: '/chat'}
   ];
 
   constructor(private router: Router) {}

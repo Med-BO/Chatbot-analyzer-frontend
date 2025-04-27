@@ -13,6 +13,7 @@ export class QuestionsComponent implements OnInit {
   questions: string[] = [];
   questionBeingEdited: string = ""
   newQuestion: string = ""
+  isLoading = false;
 
   constructor(
     private apiService: ApiService,
@@ -25,12 +26,15 @@ export class QuestionsComponent implements OnInit {
   }
 
   loadQuestions(): void {
+    this.isLoading = true;
     this.apiService.getAdminQuestions().subscribe({
       next: (response) => {
         this.questions = response.questions;
+        this.isLoading = false;
       },
       error: (error) => {
         this.showError('Failed to load questions');
+        this.isLoading = false;
       }
     });
   }

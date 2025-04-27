@@ -4,13 +4,15 @@ import { ChatbotSelectorComponent } from './pages/chatbot-selector/chatbot-selec
 import { ChatbotDetailsComponent } from './pages/chatbot-details/chatbot-details.component';
 import { QuestionsComponent } from './pages/questions/questions.component';
 import { HotelsComponent } from './pages/hotels/hotels.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/chatbot-selector', pathMatch: 'full' },
   { path: 'chatbot-selector', component: ChatbotSelectorComponent },
   { path: 'chatbot-details/:id', component: ChatbotDetailsComponent },
   { path: 'questions', component: QuestionsComponent },
-  { path: 'hotels', component: HotelsComponent }
+  { path: 'hotels', component: HotelsComponent },
+  { path: 'chat', component: ChatComponent }
 ];
 
 @NgModule({

@@ -7,8 +7,14 @@
     </button>
   </div>
 
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading questions...</p>
+  </div>
+
   <!-- Questions list -->
-  <mat-card class="questions-list">
+  <mat-card class="questions-list" *ngIf="!isLoading">
     <mat-card-header>
       <mat-card-title>Questions List</mat-card-title>
       <mat-card-subtitle>Manage your chatbot questions</mat-card-subtitle>

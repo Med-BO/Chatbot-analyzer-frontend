@@ -12,6 +12,7 @@ import { ApiService, Hotel } from 'src/app/services/api.service';
 export class HotelsComponent implements OnInit {
   hotels: Hotel[] = [];
   editingHotels: Set<string> = new Set();
+  isLoading = false;
 
   constructor(
     private dialog: MatDialog,
@@ -24,15 +25,18 @@ export class HotelsComponent implements OnInit {
   }
 
   loadHotels(): void {
+    this.isLoading = true;
     this.apiService.getAdminHotels().subscribe({
       next: (response) => {
         this.hotels = response.hotels.map(hotel => ({
           ...hotel,
           payload: typeof hotel.payload === 'string' ? hotel.payload : JSON.stringify(hotel.payload, null, 2)
         }));
+        this.isLoading = false;
       },
       error: (error) => {
         this.showError('Failed to load hotels');
+        this.isLoading = false;
       }
     });
   }

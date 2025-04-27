@@ -15,6 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AddHotelDialogComponent } from './pages/hotels/add-hotel-dialog/add-hotel-dialog.component';
 import { AddQuestionDialogComponent } from './pages/questions/add-question-dialog/add-question-dialog.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 // Angular Material Imports
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -61,7 +62,8 @@ import { MatTreeModule } from '@angular/material/tree';
     QuestionsComponent,
     AddHotelDialogComponent,
     AddQuestionDialogComponent,
-    SidebarComponent
+    SidebarComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
