@@ -73,6 +73,22 @@
       <mat-card-header>
         <mat-card-title>Analysis Results</mat-card-title>
         <mat-card-subtitle>Timestamp: {{ analysisResults.timestamp }}</mat-card-subtitle>
+        <div class="header-actions">
+          <button mat-stroked-button 
+                  color="primary"
+                  (click)="copyAllResponses()"
+                  class="action-button">
+            <mat-icon>content_copy</mat-icon>
+            Copy All
+          </button>
+          <button mat-stroked-button 
+                  color="accent"
+                  (click)="generateExcelReport()"
+                  class="action-button">
+            <mat-icon>download</mat-icon>
+            Generate Excel
+          </button>
+        </div>
       </mat-card-header>
       <mat-card-content>
         <table mat-table [dataSource]="analysisResults.results" class="results-table">

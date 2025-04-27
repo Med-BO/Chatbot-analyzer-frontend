@@ -77,4 +77,10 @@ export class ApiService {
       questions
     });
   }
+
+  generateExcelReport(analysisResults: { timestamp: string; results: ChatbotResponse[] }): Observable<Blob> {
+    return this.http.post(`${this.baseUrl}/generate-excel-report`, analysisResults, {
+      responseType: 'blob'
+    });
+  }
 } 

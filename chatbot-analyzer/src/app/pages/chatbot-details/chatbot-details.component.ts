@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ApiService } from '../../services/api.service';
 
 interface Question {
   text: string;
@@ -47,7 +48,8 @@ export class ChatbotDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private apiService: ApiService
   ) {}
 
   ngOnInit() {
@@ -141,18 +143,66 @@ export class ChatbotDetailsComponent implements OnInit {
     }
   }
 
-  copyResponse(response: string): void {
+  copyResponse(response: string) {
     navigator.clipboard.writeText(response).then(() => {
-      this.snackBar.open('Response copied to clipboard', 'Close', {
+      this.snackBar.open('Response copied to clipboard!', 'Close', {
         duration: 2000,
-        panelClass: ['success-snackbar']
       });
-    }).catch(err => {
-      this.snackBar.open('Failed to copy response', 'Close', {
-        duration: 2000,
-        panelClass: ['error-snackbar']
-      });
-      console.error('Failed to copy text: ', err);
     });
+  }
+
+  copyAllResponses() {
+    if (!this.analysisResults) return;
+    
+    const allResponses = this.analysisResults.results
+      .map((result, index) => {
+        const question = this.questions.find(q => q.text === result.question);
+        return `Hotel: ${result.hotel}\nQuestion ${index + 1}: ${question?.text}\nResponse: ${result.response}\n\n`;
+      })
+      .join('');
+
+    navigator.clipboard.writeText(allResponses).then(() => {
+      this.snackBar.open('All responses copied to clipboard!', 'Close', {
+        duration: 2000,
+      });
+    });
+  }
+
+  generateExcelReport() {
+    if (!this.analysisResults) return;
+
+    this.apiService.generateExcelReport(this.analysisResults)
+      .subscribe({
+        next: (blob: Blob) => {
+          // Create a URL for the blob
+          const url = window.URL.createObjectURL(blob);
+          
+          // Create a link element
+          const link = document.createElement('a');
+          link.href = url;
+          
+          // Extract filename from the response headers or use a default
+          const timestamp = this.analysisResults?.timestamp || new Date().toISOString().replace(/[:.]/g, '-');
+          link.download = `chatbot_analysis_${timestamp}.xlsx`;
+          
+          // Append to body, click and remove
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Clean up the URL
+          window.URL.revokeObjectURL(url);
+          
+          this.snackBar.open('Excel report downloaded successfully!', 'Close', {
+            duration: 2000,
+          });
+        },
+        error: (error) => {
+          this.snackBar.open('Error generating Excel report', 'Close', {
+            duration: 2000,
+          });
+          console.error('Error generating Excel report:', error);
+        }
+      });
   }
 }
