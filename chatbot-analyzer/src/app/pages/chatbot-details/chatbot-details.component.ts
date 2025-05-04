@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
-import { timeout } from 'rxjs';
+import { forkJoin, Observable, of, timeout } from 'rxjs';
 
 interface Question {
   text: string;
@@ -22,12 +22,21 @@ interface Hotel {
 
 interface AnalysisResponse {
   timestamp: string;
-  results: {
-    hotel: string;
-    question: string;
-    response: string;
-    status: string;
-  }[];
+  results: AnalysisResult[];
+}
+
+interface AnalysisResult {
+  hotel: string;
+  question: string;
+  response: string;
+  status: string;
+}
+
+interface BatchProgress {
+  currentBatch: number;
+  totalBatches: number;
+  processedCount: number;
+  totalCount: number;
 }
 
 @Component({
@@ -45,6 +54,15 @@ export class ChatbotDetailsComponent implements OnInit {
   analysisResults: AnalysisResponse | null = null;
   error: string | null = null;
   displayedColumns: string[] = ['hotel', 'question', 'response', 'status'];
+  
+  // Batch processing properties
+  batchSize: number = 80;
+  batchProgress: BatchProgress = {
+    currentBatch: 0,
+    totalBatches: 0,
+    processedCount: 0,
+    totalCount: 0
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -99,29 +117,112 @@ export class ChatbotDetailsComponent implements OnInit {
 
     this.loading = true;
     this.error = null;
-    this.analysisResults = null;
+    
+    // Initialize new results with timestamp
+    this.analysisResults = {
+      timestamp: new Date().toISOString(),
+      results: []
+    };
 
-    this.http.post<AnalysisResponse>(`${environment.apiUrl}/ask`, {
-      questions: this.selectedQuestions.map(q => q.text),
-      hotels: this.selectedHotels.map(h => h.name)
-    }).pipe(
-      timeout(1800000) // 30 minutes in milliseconds (20 * 60 * 1000)
-    ).subscribe({
+    const selectedQuestions = this.selectedQuestions.map(q => q.text);
+    const selectedHotels = this.selectedHotels.map(h => h.name);
+    
+    // Calculate total combinations and batch count
+    const totalCombinations = selectedQuestions.length * selectedHotels.length;
+    const totalBatches = Math.ceil(totalCombinations / this.batchSize);
+    
+    // Setup batch progress tracking
+    this.batchProgress = {
+      currentBatch: 1,
+      totalBatches: totalBatches,
+      processedCount: 0,
+      totalCount: totalCombinations
+    };
+
+    // Process batches sequentially
+    this.processBatches(selectedQuestions, selectedHotels, 0);
+  }
+
+  processBatches(questions: string[], hotels: string[], startIndex: number) {
+    const totalCombinations = questions.length * hotels.length;
+    
+    // If we've processed all combinations, we're done
+    if (startIndex >= totalCombinations) {
+      this.loading = false;
+      this.snackBar.open('Analysis complete!', 'Close', { duration: 3000 });
+      return;
+    }
+    
+    // Prepare batch combinations
+    const batchItems = this.prepareBatchItems(questions, hotels, startIndex);
+    
+    // Update progress
+    this.batchProgress.currentBatch = Math.floor(startIndex / this.batchSize) + 1;
+    
+    // Send batch request
+    this.sendBatchRequest(batchItems).subscribe({
       next: (response) => {
-        this.analysisResults = response;
+        if (!this.analysisResults) return;
+        
+        // Append new results
+        this.analysisResults.results = [
+          ...this.analysisResults.results,
+          ...response.results
+        ];
+        
+        // Update processed count
+        this.batchProgress.processedCount += response.results.length;
+        
+        // Process next batch
+        this.processBatches(questions, hotels, startIndex + this.batchSize);
       },
       error: (err) => {
         if (err.name === 'TimeoutError') {
-          this.error = 'Request timed out after 20 minutes';
+          this.error = `Batch ${this.batchProgress.currentBatch} timed out after 30 minutes`;
         } else {
-          this.error = 'Failed to run analysis';
+          this.error = `Failed to run analysis batch ${this.batchProgress.currentBatch}`;
         }
         console.error(err);
-      },
-      complete: () => {
         this.loading = false;
       }
     });
+  }
+
+  prepareBatchItems(questions: string[], hotels: string[], startIndex: number): { questions: string[], hotels: string[] } {
+    const batchCombinations: { question: string, hotel: string }[] = [];
+    const totalCombinations = questions.length * hotels.length;
+    
+    // Generate all combinations
+    for (let i = 0; i < hotels.length; i++) {
+      for (let j = 0; j < questions.length; j++) {
+        const index = i * questions.length + j;
+        batchCombinations.push({
+          question: questions[j],
+          hotel: hotels[i]
+        });
+      }
+    }
+    
+    // Get batch slice
+    const slicedCombinations = batchCombinations.slice(startIndex, startIndex + this.batchSize);
+    
+    // Extract unique questions and hotels for this batch
+    const batchQuestions = Array.from(new Set(slicedCombinations.map(item => item.question)));
+    const batchHotels = Array.from(new Set(slicedCombinations.map(item => item.hotel)));
+    
+    return {
+      questions: batchQuestions,
+      hotels: batchHotels
+    };
+  }
+
+  sendBatchRequest(batchItems: { questions: string[], hotels: string[] }): Observable<AnalysisResponse> {
+    return this.http.post<AnalysisResponse>(`${environment.apiUrl}/ask`, {
+      questions: batchItems.questions,
+      hotels: batchItems.hotels
+    }).pipe(
+      timeout(1800000) // 30 minutes in milliseconds
+    );
   }
 
   getStatusClass(status: string): string {
@@ -163,8 +264,7 @@ export class ChatbotDetailsComponent implements OnInit {
     
     const allResponses = this.analysisResults.results
       .map((result, index) => {
-        const question = this.questions.find(q => q.text === result.question);
-        return `Hotel: ${result.hotel}\nQuestion ${index + 1}: ${question?.text}\nResponse: ${result.response}\n\n`;
+        return `Hotel: ${result.hotel}\nQuestion: ${result.question}\nResponse: ${result.response}\n\n`;
       })
       .join('');
 

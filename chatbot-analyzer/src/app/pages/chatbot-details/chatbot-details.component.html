@@ -14,14 +14,18 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Loading Spinner -->
+  <!-- Loading Spinner with Progress Information -->
   <div *ngIf="loading" class="loading-container">
     <mat-spinner diameter="50"></mat-spinner>
-    <p class="loading-text">Running analysis...</p>
+    <p class="loading-text">Processing batch {{ batchProgress.currentBatch }} of {{ batchProgress.totalBatches }}</p>
+    <div class="progress-bar-container">
+      <mat-progress-bar mode="determinate" [value]="(batchProgress.processedCount / batchProgress.totalCount) * 100"></mat-progress-bar>
+      <p class="progress-text">{{ batchProgress.processedCount }} of {{ batchProgress.totalCount }} combinations completed</p>
+    </div>
   </div>
 
   <!-- Results Section - Now at the top after header -->
-  <div class="results-container" *ngIf="analysisResults && !loading">
+  <div class="results-container" *ngIf="analysisResults && analysisResults.results.length > 0">
     <mat-card>
       <mat-card-header>
         <mat-card-title>Analysis Results</mat-card-title>
@@ -90,7 +94,7 @@
     </mat-card>
   </div>
 
-  <div class="selection-container" *ngIf="!loading">
+  <div class="selection-container" [class.disabled]="loading">
     <div class="row">
       <!-- Questions Section -->
       <div class="col-md-6">
@@ -100,14 +104,15 @@
             <div class="select-all-container">
               <button mat-button 
                       color="primary" 
-                      (click)="toggleSelectAllQuestions()">
+                      (click)="toggleSelectAllQuestions()"
+                      [disabled]="loading">
                 <mat-icon>select_all</mat-icon>
                 Select All
               </button>
             </div>
           </mat-card-header>
           <mat-card-content>
-            <mat-selection-list [(ngModel)]="selectedQuestions">
+            <mat-selection-list [(ngModel)]="selectedQuestions" [disabled]="loading">
               <mat-list-option *ngFor="let question of questions" [value]="question">
                 {{ question.text }}
               </mat-list-option>
@@ -124,14 +129,15 @@
             <div class="select-all-container">
               <button mat-button 
                       color="primary" 
-                      (click)="toggleSelectAllHotels()">
+                      (click)="toggleSelectAllHotels()"
+                      [disabled]="loading">
                 <mat-icon>select_all</mat-icon>
                 Select All
               </button>
             </div>
           </mat-card-header>
           <mat-card-content>
-            <mat-selection-list [(ngModel)]="selectedHotels">
+            <mat-selection-list [(ngModel)]="selectedHotels" [disabled]="loading">
               <mat-list-option *ngFor="let hotel of hotels" [value]="hotel">
                 {{ hotel.name }}
               </mat-list-option>
@@ -156,17 +162,5 @@
 
 <!-- Add these styles to your component's CSS file -->
 <style>
-  .mat-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
   
-  .select-all-container {
-    margin-left: auto;
-  }
-  
-  .results-container {
-    margin-bottom: 20px;
-  }
 </style>
