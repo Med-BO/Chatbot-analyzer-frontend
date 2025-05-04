@@ -105,7 +105,7 @@ export class ChatbotDetailsComponent implements OnInit {
       questions: this.selectedQuestions.map(q => q.text),
       hotels: this.selectedHotels.map(h => h.name)
     }).pipe(
-      timeout(1200000) // 20 minutes in milliseconds (20 * 60 * 1000)
+      timeout(1800000) // 30 minutes in milliseconds (20 * 60 * 1000)
     ).subscribe({
       next: (response) => {
         this.analysisResults = response;
