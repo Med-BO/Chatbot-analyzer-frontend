@@ -20,55 +20,8 @@
     <p class="loading-text">Running analysis...</p>
   </div>
 
-  <div class="selection-container" *ngIf="!loading">
-    <div class="row">
-      <!-- Questions Section -->
-      <div class="col-md-6">
-        <mat-card class="selection-card">
-          <mat-card-header>
-            <mat-card-title>Questions</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-selection-list [(ngModel)]="selectedQuestions">
-              <mat-list-option *ngFor="let question of questions" [value]="question">
-                {{ question.text }}
-              </mat-list-option>
-            </mat-selection-list>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-      <!-- Hotels Section -->
-      <div class="col-md-6">
-        <mat-card class="selection-card">
-          <mat-card-header>
-            <mat-card-title>Hotels</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-selection-list [(ngModel)]="selectedHotels">
-              <mat-list-option *ngFor="let hotel of hotels" [value]="hotel">
-                {{ hotel.name }}
-              </mat-list-option>
-            </mat-selection-list>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
-
-    <!-- Run Analysis Button -->
-    <div class="text-center mt-4">
-      <button mat-raised-button 
-              color="primary"
-              (click)="runAnalysis()"
-              [disabled]="loading">
-        <mat-icon>play_arrow</mat-icon>
-        Run Analysis
-      </button>
-    </div>
-  </div>
-
-  <!-- Results Section -->
-  <div class="results-container" *ngIf="analysisResults">
+  <!-- Results Section - Now at the top after header -->
+  <div class="results-container" *ngIf="analysisResults && !loading">
     <mat-card>
       <mat-card-header>
         <mat-card-title>Analysis Results</mat-card-title>
@@ -136,4 +89,84 @@
       </mat-card-content>
     </mat-card>
   </div>
+
+  <div class="selection-container" *ngIf="!loading">
+    <div class="row">
+      <!-- Questions Section -->
+      <div class="col-md-6">
+        <mat-card class="selection-card">
+          <mat-card-header>
+            <mat-card-title>Questions</mat-card-title>
+            <div class="select-all-container">
+              <button mat-button 
+                      color="primary" 
+                      (click)="toggleSelectAllQuestions()">
+                <mat-icon>select_all</mat-icon>
+                Select All
+              </button>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-selection-list [(ngModel)]="selectedQuestions">
+              <mat-list-option *ngFor="let question of questions" [value]="question">
+                {{ question.text }}
+              </mat-list-option>
+            </mat-selection-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Hotels Section -->
+      <div class="col-md-6">
+        <mat-card class="selection-card">
+          <mat-card-header>
+            <mat-card-title>Hotels</mat-card-title>
+            <div class="select-all-container">
+              <button mat-button 
+                      color="primary" 
+                      (click)="toggleSelectAllHotels()">
+                <mat-icon>select_all</mat-icon>
+                Select All
+              </button>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-selection-list [(ngModel)]="selectedHotels">
+              <mat-list-option *ngFor="let hotel of hotels" [value]="hotel">
+                {{ hotel.name }}
+              </mat-list-option>
+            </mat-selection-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Run Analysis Button -->
+    <div class="text-center mt-4">
+      <button mat-raised-button 
+              color="primary"
+              (click)="runAnalysis()"
+              [disabled]="loading">
+        <mat-icon>play_arrow</mat-icon>
+        Run Analysis
+      </button>
+    </div>
+  </div>
 </div>
+
+<!-- Add these styles to your component's CSS file -->
+<style>
+  .mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .select-all-container {
+    margin-left: auto;
+  }
+  
+  .results-container {
+    margin-bottom: 20px;
+  }
+</style>

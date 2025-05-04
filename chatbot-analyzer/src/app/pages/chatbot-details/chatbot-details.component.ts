@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
+import { timeout } from 'rxjs';
 
 interface Question {
   text: string;
@@ -103,12 +104,18 @@ export class ChatbotDetailsComponent implements OnInit {
     this.http.post<AnalysisResponse>(`${environment.apiUrl}/ask`, {
       questions: this.selectedQuestions.map(q => q.text),
       hotels: this.selectedHotels.map(h => h.name)
-    }).subscribe({
+    }).pipe(
+      timeout(1200000) // 20 minutes in milliseconds (20 * 60 * 1000)
+    ).subscribe({
       next: (response) => {
         this.analysisResults = response;
       },
       error: (err) => {
-        this.error = 'Failed to run analysis';
+        if (err.name === 'TimeoutError') {
+          this.error = 'Request timed out after 20 minutes';
+        } else {
+          this.error = 'Failed to run analysis';
+        }
         console.error(err);
       },
       complete: () => {
@@ -204,5 +211,21 @@ export class ChatbotDetailsComponent implements OnInit {
           console.error('Error generating Excel report:', error);
         }
       });
+  }
+
+  toggleSelectAllQuestions() {
+    if (this.selectedQuestions.length === this.questions.length) {
+      this.selectedQuestions = []
+    } else {
+      this.selectedQuestions = [...this.questions];
+    }
+  }
+  
+  toggleSelectAllHotels() {
+    if (this.selectedHotels.length === this.hotels.length) {
+      this.selectedHotels = []
+    } else {
+      this.selectedHotels = [...this.hotels];
+    }
   }
 }
